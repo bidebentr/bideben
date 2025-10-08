@@ -227,19 +227,20 @@ export default function Home() {
                 </button>
 
                 {item.link && item.link !== "nan" && (
-                  <a href={item.link} target="_blank" rel="noopener noreferrer"
-                    style={{
-                      display: "inline-block",
-                      padding: "10px 16px",
-                      borderRadius: 8,
-                      background: `linear-gradient(90deg, ${barColor}, #fff)`,
-                      color: "#000",
-                      fontWeight: "bold",
-                      boxShadow: `0 0 10px ${barColor}`,
-                      marginBottom: "16px",
-                    }}>
-                    🔗 Gerçek Ürünü Gör
-                  </a>
+                  <a
+  href={item.link}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-flex w-full items-center justify-center gap-2 py-3 rounded-lg font-semibold text-black hover:scale-[1.02] transition-transform"
+  style={{
+    backgroundImage: "linear-gradient(90deg, #fcd34d, #f59e0b, #fde68a)",
+    border: "1px solid #f59e0b",
+    boxShadow: "0 0 12px rgba(245,158,11,.6)",
+  }}
+>
+  🔍 Gerçek Ürünü Gör
+</a>
+
                 )}
               </div>
 
