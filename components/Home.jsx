@@ -135,6 +135,42 @@ export default function Home() {
           <p>💫 <span style={{ color: "#f06292" }}>En Popüler Kategori:</span> Telefonlar</p>
           <p className="col-span-full text-center mt-4">🔥 <span style={{ color: "#ffd700" }}>En Çok Katkı Yapılan Ürün:</span> Dyson V15 Kablosuz Süpürge</p>
         </div>
+        {/* 🌐 bideben Bilgi Sayfaları */}
+<section className="mt-20 text-center text-gray-300">
+  <h2
+    className="text-2xl font-semibold mb-6"
+    style={{
+      color: "#ffd700",
+      textShadow: "0 0 10px #ffd700aa",
+    }}
+  >
+    Daha Fazla Bilgi
+  </h2>
+
+  <div className="flex flex-col sm:flex-row justify-center gap-4">
+    <a
+      href="/nasil-calisir"
+      className="px-6 py-3 bg-[#161616] border border-yellow-600 rounded-xl hover:bg-yellow-600 hover:text-black transition-all"
+    >
+      ⚙️ bideben Nasıl Çalışır?
+    </a>
+
+    <a
+      href="/oduller"
+      className="px-6 py-3 bg-[#161616] border border-yellow-600 rounded-xl hover:bg-yellow-600 hover:text-black transition-all"
+    >
+      🎁 Topluluk Katkısı Ödülleri
+    </a>
+
+    <a
+      href="/sss"
+      className="px-6 py-3 bg-[#161616] border border-yellow-600 rounded-xl hover:bg-yellow-600 hover:text-black transition-all"
+    >
+      ❓ Sık Sorulan Sorular
+    </a>
+  </div>
+</section>
+
       </div>
 
       {/* Arama Kutusu */}
