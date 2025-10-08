@@ -4,69 +4,59 @@ export default function Document() {
   return (
     <Html lang="tr">
       <Head>
+        {/* ✅ Google Search Console Doğrulama */}
         <meta
-  name="google-site-verification"
-  content="oVX_IwBVT7ZFU_CZXCAA68H5wT5e-5wx1-9Re7q9gT8"
-/>
+          name="google-site-verification"
+          content="oVX_IwBVT7ZFU_CZXCAA68H5wT5e-5wx1-9Re7q9gT8"
+        />
 
-        {/* 🌐 Genel Site Bilgisi */}
+        {/* 🌐 Genel Site Bilgileri */}
         <meta charSet="utf-8" />
         <meta name="robots" content="index, follow" />
-        <meta name="theme-color" content="#0b0b0b" />
         <meta
           name="description"
-          content="bideben — dijital eserlerle topluluk ödülleri kazandıran yeni nesil platform. Katkı yap, topluluğu büyüt, ödülü paylaş."
+          content="bideben — dijital eserlerle topluluk ödülleri kazandıran yeni nesil platform. Katkı yap, topluluğu büyüt, ödülü paylaş!"
         />
         <meta
           name="keywords"
-          content="bideben, dijital eser, topluluk katkısı, ödül sistemi, koleksiyon, NFT, dijital sanat, çekilişsiz ödül"
+          content="bideben, topluluk katkısı, dijital eser, ödül sistemi, koleksiyon, AI sanat, dijital sanat, çekilişsiz ödül"
         />
-        <meta name="author" content="bideben.com" />
+        <meta name="author" content="Hasan Ali Yüce" />
+        <meta name="theme-color" content="#0b0b0b" />
 
-        {/* 🪐 Open Graph (Facebook / WhatsApp / LinkedIn önizleme) */}
+        {/* 🖼️ Open Graph (Facebook, WhatsApp, LinkedIn) */}
         <meta property="og:type" content="website" />
+        <meta property="og:locale" content="tr_TR" />
         <meta property="og:site_name" content="bideben" />
-        <meta
-          property="og:title"
-          content="bideben — Dijital Eser, Gerçek Ödül"
-        />
+        <meta property="og:title" content="bideben | Dijital Eser & Topluluk Katkısı" />
         <meta
           property="og:description"
-          content="Katkı yap, topluluk ödülüne ortak ol. Gerçek ürün, toplulukla paylaşılır."
+          content="Dijital eser satın al, topluluk katkısıyla gerçek ödüller kazan. bideben topluluğuna katıl!"
         />
-        <meta property="og:url" content="https://bideben.com" />
-        <meta property="og:image" content="https://bideben.com/images/og-banner.png" />
+        <meta property="og:url" content="https://www.bideben.com" />
+        <meta property="og:image" content="https://www.bideben.com/images/og-banner.png" />
 
-        {/* 🐦 Twitter Card (X platformu için) */}
+        {/* 🐦 Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta
-          name="twitter:title"
-          content="bideben — Dijital Eser, Gerçek Ödül"
-        />
+        <meta name="twitter:title" content="bideben | Dijital Eser & Topluluk Katkısı" />
         <meta
           name="twitter:description"
-          content="Topluluk katkısı ile dijital eserler bir araya geliyor. Her katkı seni gerçek bir ödüle yaklaştırır."
+          content="Topluluk katkısı ile ödül kazandıran dijital eser platformu. Katkı yap, kazananlardan biri ol!"
         />
-        <meta
-          name="twitter:image"
-          content="https://bideben.com/images/og-banner.png"
-        />
+        <meta name="twitter:image" content="https://www.bideben.com/images/og-banner.png" />
         <meta name="twitter:site" content="@bidebenX" />
-        <meta name="twitter:creator" content="@bidebenX" />
 
-        {/* 💎 Favicon & App Icons */}
-        <link rel="icon" href="/images/favicon.png" />
-        <link rel="apple-touch-icon" href="/images/favicon.png" />
+        {/* 🌟 Favicon */}
+        <link rel="icon" href="/images/favicon.png" type="image/png" />
 
-        {/* 🧠 Font - Orbitron (dijital tarz) */}
+        {/* ⚡ Performans için Preload */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
           rel="stylesheet"
         />
       </Head>
-
       <body>
         <Main />
         <NextScript />
