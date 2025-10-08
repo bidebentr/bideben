@@ -1,4 +1,5 @@
 'use client';
+import Footer from "./Footer.jsx";
 import React, { useState, useEffect, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { products } from "../data/products.js";
@@ -293,14 +294,17 @@ export default function Home() {
                     🔗 Gerçek Ürünü Gör
                   </a>
                 )}
+
               </div>
 
               {shouldShowScene && <PixarScene image={pixarScenes[sceneIndex].image} />}
             </React.Fragment>
           );
         })}
+        
       </div>
-
+                {/* 🟡 Footer artık burada olmalı */}
+<Footer />
       {selectedProduct && (
         <KatkıModal
           product={selectedProduct}
