@@ -1,4 +1,6 @@
 @echo off
+chcp 65001 >nul
+title 🚀 bideben Excel Güncelleme
 echo ----------------------------------------------
 echo 🚀 bideben Excel Güncelleme Başlatıldı...
 echo ----------------------------------------------
