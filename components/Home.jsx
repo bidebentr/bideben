@@ -231,15 +231,18 @@ export default function Home() {
   href={item.link}
   target="_blank"
   rel="noopener noreferrer"
-  className="inline-flex w-full items-center justify-center gap-2 py-3 rounded-lg font-semibold text-black hover:scale-[1.02] transition-transform"
+  className="w-full mt-3 py-2 rounded-lg font-semibold text-black transition transform hover:scale-[1.03]"
   style={{
-    backgroundImage: "linear-gradient(90deg, #fcd34d, #f59e0b, #fde68a)",
-    border: "1px solid #f59e0b",
-    boxShadow: "0 0 12px rgba(245,158,11,.6)",
+    display: "inline-block",
+    background: `linear-gradient(90deg, ${barColor}, #fef3c7)`,
+    boxShadow: `0 0 10px ${barColor}`,
+    textAlign: "center",
+    marginBottom: "12px",
   }}
 >
   🔍 Gerçek Ürünü Gör
 </a>
+
 
                 )}
               </div>
