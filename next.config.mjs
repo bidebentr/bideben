@@ -1,6 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  images: {
+    formats: ['image/avif', 'image/webp'],
+  },
+  // İstersen ileride diğer ayarlar da buraya:
+  // reactStrictMode: true,
+  // swcMinify: true,
+  // experimental: { serverActions: { allowedOrigins: ['*'] } },
 };
 
 export default nextConfig;
