@@ -1,5 +1,4 @@
 'use client';
-import Footer from "./Footer.jsx";
 import React, { useState, useEffect, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { products } from "../data/products.js";
@@ -7,7 +6,6 @@ import { products } from "../data/products.js";
 const ParticleLayer = dynamic(() => import("./ParticleLayer.jsx"), { ssr: false });
 const Hero = dynamic(() => import("./Hero.jsx"), { ssr: false });
 const CountdownTimer = dynamic(() => import("./CountdownTimer.jsx"), { ssr: false });
-const PixarScene = dynamic(() => import("./PixarScene.jsx"), { ssr: false });
 const KatkıModal = dynamic(() => import("./KatkıModal.jsx"), { ssr: false });
 const CartSidebar = dynamic(() => import("./CartSidebar.jsx"), { ssr: false });
 
@@ -20,17 +18,7 @@ export default function Home() {
   const [cartOpen, setCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
 
-  // Pixar sahneleri
-  const pixarScenes = [
-    { id: 1, image: "/images/pixar-1.png" },
-    { id: 2, image: "/images/pixar-2.png" },
-    { id: 3, image: "/images/pixar-3.png" },
-    { id: 4, image: "/images/pixar-4.png" },
-    { id: 5, image: "/images/pixar-5.png" },
-    { id: 6, image: "/images/pixar-6.png" },
-    { id: 7, image: "/images/pixar-7.png" },
-    { id: 8, image: "/images/pixar-8.png" },
-  ];
+
 
   const categoryColors = {
     "Beyaz Eşya": "#4fc3f7",
@@ -136,42 +124,6 @@ export default function Home() {
           <p>💫 <span style={{ color: "#f06292" }}>En Popüler Kategori:</span> Telefonlar</p>
           <p className="col-span-full text-center mt-4">🔥 <span style={{ color: "#ffd700" }}>En Çok Katkı Yapılan Ürün:</span> Dyson V15 Kablosuz Süpürge</p>
         </div>
-        {/* 🌐 bideben Bilgi Sayfaları */}
-<section className="mt-20 text-center text-gray-300">
-  <h2
-    className="text-2xl font-semibold mb-6"
-    style={{
-      color: "#ffd700",
-      textShadow: "0 0 10px #ffd700aa",
-    }}
-  >
-    Daha Fazla Bilgi
-  </h2>
-
-  <div className="flex flex-col sm:flex-row justify-center gap-4">
-    <a
-      href="/nasil-calisir"
-      className="px-6 py-3 bg-[#161616] border border-yellow-600 rounded-xl hover:bg-yellow-600 hover:text-black transition-all"
-    >
-      ⚙️ bideben Nasıl Çalışır?
-    </a>
-
-    <a
-      href="/oduller"
-      className="px-6 py-3 bg-[#161616] border border-yellow-600 rounded-xl hover:bg-yellow-600 hover:text-black transition-all"
-    >
-      🎁 Topluluk Katkısı Ödülleri
-    </a>
-
-    <a
-      href="/sss"
-      className="px-6 py-3 bg-[#161616] border border-yellow-600 rounded-xl hover:bg-yellow-600 hover:text-black transition-all"
-    >
-      ❓ Sık Sorulan Sorular
-    </a>
-  </div>
-</section>
-
       </div>
 
       {/* Arama Kutusu */}
@@ -198,11 +150,6 @@ export default function Home() {
             (key) => key.toLowerCase() === item.category?.toLowerCase().trim()
           );
           const barColor = categoryColors[categoryKey] || categoryColors.DEFAULT;
-
-          const CHUNK = 11;
-          const shouldShowScene = (index + 1) % CHUNK === 0;
-          const sceneIndex = Math.floor(index / CHUNK) % pixarScenes.length;
-
           return (
             <React.Fragment key={item.id}>
               <div
@@ -276,7 +223,7 @@ export default function Home() {
                     marginBottom: "12px",
                   }}
                 >
-                  💎 Katkı Yap
+                  💎 Resmi Satın Al - Katkı Yap
                 </button>
 
                 {item.link && item.link !== "nan" && (
@@ -294,17 +241,14 @@ export default function Home() {
                     🔗 Gerçek Ürünü Gör
                   </a>
                 )}
-
               </div>
 
-              {shouldShowScene && <PixarScene image={pixarScenes[sceneIndex].image} />}
+              
             </React.Fragment>
           );
         })}
-        
       </div>
-                {/* 🟡 Footer artık burada olmalı */}
-<Footer />
+
       {selectedProduct && (
         <KatkıModal
           product={selectedProduct}

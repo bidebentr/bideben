@@ -67,7 +67,7 @@ export default function Footer() {
         </a>
 
         <a
-          href="https://www.tiktok.com/@bideben"
+          href="https://www.tiktok.com/@bidebencom"
           target="_blank"
           rel="noopener noreferrer"
           className="text-gray-100 hover:text-white text-2xl drop-shadow-[0_0_10px_#00f5ff] transition-transform transform hover:scale-110"
@@ -76,7 +76,7 @@ export default function Footer() {
         </a>
 
         <a
-          href="https://www.youtube.com/@bideben"
+          href="https://www.youtube.com/@bidebencom"
           target="_blank"
           rel="noopener noreferrer"
           className="text-red-500 hover:text-red-400 text-2xl drop-shadow-[0_0_10px_#ff1a1a] transition-transform transform hover:scale-110"
