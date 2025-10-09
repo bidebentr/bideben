@@ -15,17 +15,21 @@ export default function CartSidebar({ open, onClose, items, onUpdateQty, onRemov
             item.qty,
           ]),
           total: parseFloat(total),
+          test_mode: "0", // 🔒 HER ZAMAN CANLI MOD
         }),
       });
 
       const data = await response.json();
+
       if (data.status === "success" && data.token) {
+        // 🚀 Başarılı, ödeme sayfasına yönlendir
         window.location.href = `https://www.paytr.com/odeme/guvenli/${data.token}`;
       } else {
+        console.error("PayTR Yanıtı:", data);
         alert("PayTR bağlantı hatası: " + (data.message || "Geçersiz yanıt"));
       }
     } catch (err) {
-      console.error(err);
+      console.error("Bağlantı Hatası:", err);
       alert("Bağlantı hatası, lütfen tekrar deneyin.");
     }
   };
@@ -95,7 +99,7 @@ export default function CartSidebar({ open, onClose, items, onUpdateQty, onRemov
                 boxShadow: "0 0 15px rgba(187,134,252,0.8)",
               }}
             >
-              Ödeme Yap ({total} ₺)
+              💳 Ödeme Yap ({total} ₺)
             </button>
           </div>
         )}
