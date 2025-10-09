@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 export default function Sepetim() {
   const { data: session } = useSession();
   const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   // 🧩 İlk yüklemede sepeti localStorage'dan çek
   useEffect(() => {
@@ -41,6 +42,39 @@ export default function Sepetim() {
     (s, it) => s + (Number(it.price) || 0) * (Number(it.qty) || 1),
     0
   );
+
+  // 💳 Ödeme işlemi (PayTR bağlantısı)
+  const handlePayment = async () => {
+    if (!session) {
+      signIn(); // kullanıcı giriş ekranına yönlendirilir
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const basket = items.map((it) => [it.title, Number(it.price), it.qty]);
+      const response = await fetch("/api/paytr-init", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ basket, total: subtotal }),
+      });
+
+      const data = await response.json();
+
+      if (data.token) {
+        // PayTR iframe yönlendirmesi
+        window.location.href = `https://www.paytr.com/odeme/guvenli/${data.token}`;
+      } else {
+        alert("PayTR bağlantı hatası. Lütfen tekrar deneyin.");
+      }
+    } catch (err) {
+      alert("Bağlantı hatası, lütfen tekrar deneyin.");
+      console.error("PAYTR Error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black text-gray-200 py-16">
@@ -121,19 +155,18 @@ export default function Sepetim() {
                 <div className="text-2xl font-semibold text-yellow-400">
                   {subtotal.toFixed(2)} TL
                 </div>
-                <button
-  onClick={() => {
-    if (!session) {
-      signIn(); // kullanıcı giriş ekranına yönlendirilir
-    } else {
-      window.location.href = "/api/paytr-init"; // login olmuşsa ödeme sayfasına gider
-    }
-  }}
-  className="inline-block mt-3 px-6 py-3 rounded-xl bg-yellow-500 text-black font-medium hover:bg-yellow-400 transition"
->
-  Ödemeye Git
-</button>
 
+                <button
+                  onClick={handlePayment}
+                  disabled={loading}
+                  className={`inline-block mt-3 px-6 py-3 rounded-xl font-medium transition ${
+                    loading
+                      ? "bg-gray-600 cursor-not-allowed"
+                      : "bg-yellow-500 text-black hover:bg-yellow-400"
+                  }`}
+                >
+                  {loading ? "Bağlanıyor..." : "Ödemeye Git"}
+                </button>
               </div>
             </div>
           </>
