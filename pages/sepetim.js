@@ -1,6 +1,8 @@
+import { useSession, signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 export default function Sepetim() {
+  const { data: session } = useSession();
   const [items, setItems] = useState([]);
 
   // 🧩 İlk yüklemede sepeti localStorage'dan çek
@@ -119,12 +121,19 @@ export default function Sepetim() {
                 <div className="text-2xl font-semibold text-yellow-400">
                   {subtotal.toFixed(2)} TL
                 </div>
-                <a
-                  href="/api/paytr-init"
-                  className="inline-block mt-3 px-6 py-3 rounded-xl bg-yellow-500 text-black font-medium hover:bg-yellow-400 transition"
-                >
-                  Ödemeye Git
-                </a>
+                <button
+  onClick={() => {
+    if (!session) {
+      signIn(); // kullanıcı giriş ekranına yönlendirilir
+    } else {
+      window.location.href = "/api/paytr-init"; // login olmuşsa ödeme sayfasına gider
+    }
+  }}
+  className="inline-block mt-3 px-6 py-3 rounded-xl bg-yellow-500 text-black font-medium hover:bg-yellow-400 transition"
+>
+  Ödemeye Git
+</button>
+
               </div>
             </div>
           </>

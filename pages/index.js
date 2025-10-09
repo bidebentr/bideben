@@ -1,5 +1,11 @@
+import ProfileMenu from "@/components/ProfileMenu";
 import Home from "../components/Home.jsx";
 
 export default function IndexPage() {
-  return <Home />;
+  return (
+    <>
+      <ProfileMenu />
+      <Home />
+    </>
+  );
 }
