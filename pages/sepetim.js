@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 export default function Sepetim() {
   const [items, setItems] = useState([]);
 
-  // İlk yüklemede sepeti localStorage'dan çek
+  // 🧩 İlk yüklemede sepeti localStorage'dan çek
   useEffect(() => {
     try {
       const raw = localStorage.getItem("cart");
@@ -13,11 +13,12 @@ export default function Sepetim() {
     }
   }, []);
 
-  // Her değişiklikte localStorage'a geri yaz
+  // 💾 Her değişiklikte localStorage'a geri yaz
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(items));
   }, [items]);
 
+  // 🔼 Miktar artır / azalt / kaldır
   const inc = (id) =>
     setItems((xs) =>
       xs.map((it) => (it.id === id ? { ...it, qty: (it.qty || 1) + 1 } : it))
@@ -30,11 +31,10 @@ export default function Sepetim() {
       )
     );
 
-  const removeItem = (id) =>
-    setItems((xs) => xs.filter((it) => it.id !== id));
-
+  const removeItem = (id) => setItems((xs) => xs.filter((it) => it.id !== id));
   const clear = () => setItems([]);
 
+  // 💰 Ara toplam
   const subtotal = items.reduce(
     (s, it) => s + (Number(it.price) || 0) * (Number(it.qty) || 1),
     0
@@ -43,10 +43,10 @@ export default function Sepetim() {
   return (
     <div className="min-h-screen bg-black text-gray-200 py-16">
       <div className="max-w-5xl mx-auto px-4">
-        <h1 className="text-3xl font-semibold text-yellow-400 mb-6">Sepetim</h1>
+        <h1 className="text-3xl font-semibold text-yellow-400 mb-6">🛒 Sepetim</h1>
 
         {items.length === 0 ? (
-          <div className="bg-gray-900/60 border border-yellow-600/40 rounded-xl p-8">
+          <div className="bg-gray-900/60 border border-yellow-600/40 rounded-xl p-8 text-center">
             <p>Sepetiniz boş.</p>
             <a
               href="/"
@@ -57,13 +57,14 @@ export default function Sepetim() {
           </div>
         ) : (
           <>
+            {/* Ürün listesi */}
             <div className="bg-gray-900/60 border border-yellow-600/40 rounded-xl divide-y divide-gray-800">
               {items.map((it) => (
                 <div key={it.id} className="flex items-center gap-4 p-4">
                   <img
                     src={it.image}
                     alt={it.title}
-                    className="w-20 h-20 object-cover rounded-lg"
+                    className="w-20 h-20 object-cover rounded-lg border border-yellow-700/30"
                   />
                   <div className="flex-1">
                     <div className="font-medium">{it.title}</div>
@@ -104,6 +105,7 @@ export default function Sepetim() {
               ))}
             </div>
 
+            {/* Alt kısım */}
             <div className="flex flex-col sm:flex-row items-center justify-between mt-6 gap-4">
               <button
                 onClick={clear}
@@ -119,7 +121,7 @@ export default function Sepetim() {
                 </div>
                 <a
                   href="/api/paytr-init"
-                  className="inline-block mt-3 px-6 py-3 rounded-xl bg-yellow-500 text-black font-medium hover:bg-yellow-400"
+                  className="inline-block mt-3 px-6 py-3 rounded-xl bg-yellow-500 text-black font-medium hover:bg-yellow-400 transition"
                 >
                   Ödemeye Git
                 </a>

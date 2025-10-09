@@ -1,6 +1,16 @@
+'use client';
 import Head from "next/head";
+import dynamic from "next/dynamic";
+
+const Footer = dynamic(() => import("../components/Footer.jsx"), { ssr: false });
 
 export default function SSS() {
+  const handleBack = () => {
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
+  };
+
   return (
     <>
       <Head>
@@ -82,6 +92,14 @@ export default function SSS() {
       </Head>
 
       <main className="min-h-screen bg-[#0a0a0a] text-white flex flex-col items-center px-6 py-16">
+        {/* 🔙 Anasayfa Butonu */}
+        <button
+          onClick={handleBack}
+          className="mb-10 px-5 py-2 bg-gradient-to-r from-yellow-400 to-yellow-200 text-black font-semibold rounded-lg hover:scale-105 transition-transform"
+        >
+          ⬅️ Anasayfa
+        </button>
+
         <h1 className="text-4xl md:text-5xl font-bold mb-10 text-yellow-400 text-center">
           ❓ Sık Sorulan Sorular
         </h1>
@@ -119,9 +137,9 @@ export default function SSS() {
           ))}
         </div>
 
-        <p className="text-sm text-gray-500 mt-12">
-          © {new Date().getFullYear()} bideben — Dijital Eser, Gerçek Ödül.
-        </p>
+        <div className="mt-16 w-full">
+          <Footer />
+        </div>
       </main>
     </>
   );

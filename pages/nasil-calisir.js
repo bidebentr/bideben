@@ -1,6 +1,16 @@
+'use client';
 import Head from "next/head";
+import dynamic from "next/dynamic";
+
+const Footer = dynamic(() => import("../components/Footer.jsx"), { ssr: false });
 
 export default function NasilCalisir() {
+  const handleBack = () => {
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
+  };
+
   return (
     <>
       <Head>
@@ -31,6 +41,14 @@ export default function NasilCalisir() {
       </Head>
 
       <main className="min-h-screen bg-[#0a0a0a] text-white flex flex-col items-center px-6 py-16">
+        {/* 🔙 Anasayfa Butonu */}
+        <button
+          onClick={handleBack}
+          className="mb-10 px-5 py-2 bg-gradient-to-r from-yellow-400 to-yellow-200 text-black font-semibold rounded-lg hover:scale-105 transition-transform"
+        >
+          ⬅️ Anasayfa
+        </button>
+
         <h1 className="text-4xl md:text-5xl font-bold mb-10 text-yellow-400 text-center">
           ⚙️ bideben nasıl çalışır?
         </h1>
@@ -40,8 +58,8 @@ export default function NasilCalisir() {
             <h2 className="text-2xl font-semibold text-yellow-400 mb-3">1️⃣ Dijital Eser Seç</h2>
             <p className="text-gray-300 leading-relaxed">
               bideben’de her eser, gerçek bir ödülle ilişkilidir. Beğendiğin bir dijital eseri seç
-              ve satın alarak katkını başlat. Her satış, o ödülün <strong>Katkı Barı</strong>’na
-              eklenir.
+              ve satın alarak katkını başlat. Her satış, o ödülün{" "}
+              <strong>Katkı Barı</strong>’na eklenir.
             </p>
           </div>
 
@@ -65,9 +83,9 @@ export default function NasilCalisir() {
           <div className="bg-[#161616] border border-yellow-600 rounded-2xl p-8 shadow-lg">
             <h2 className="text-2xl font-semibold text-yellow-400 mb-3">4️⃣ Şeffaf ve Güvenli</h2>
             <p className="text-gray-300 leading-relaxed">
-              Tüm katkı hareketleri herkes tarafından görülebilir. 
-              bideben, Türkiye’deki yasal çerçeveye uygun, çekilişsiz ve 
-              tamamen <strong>şeffaf ödül sistemi</strong> sunar.
+              Tüm katkı hareketleri herkes tarafından görülebilir. bideben, Türkiye’deki yasal
+              çerçeveye uygun, çekilişsiz ve tamamen{" "}
+              <strong>şeffaf ödül sistemi</strong> sunar.
             </p>
           </div>
 
@@ -80,9 +98,9 @@ export default function NasilCalisir() {
           </div>
         </section>
 
-        <p className="text-sm text-gray-500 mt-12">
-          © {new Date().getFullYear()} bideben — Dijital Eser, Gerçek Ödül.
-        </p>
+        <div className="mt-16 w-full">
+          <Footer />
+        </div>
       </main>
     </>
   );

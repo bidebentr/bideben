@@ -21,27 +21,33 @@ export default function Footer() {
         <div>
           <h2 className="text-yellow-400 font-semibold text-lg mb-2">Keşfet</h2>
           <ul className="space-y-1 text-sm">
-            <li>
-              <a href="/nasil-calisir" className="hover:text-yellow-400 transition">
-                ⚙️ Nasıl Çalışır
-              </a>
-            </li>
-            <li>
-              <a href="/oduller" className="hover:text-yellow-400 transition">
-                🎁 Katkı Ödülleri
-              </a>
-            </li>
-            <li>
-              <a href="/sss" className="hover:text-yellow-400 transition">
-                ❓ SSS
-              </a>
-            </li>
-            <li>
-              <a href="/iletisim" className="hover:text-yellow-400 transition">
-                📩 İletişim
-              </a>
-            </li>
-          </ul>
+  <li>
+    <a href="/nasil-calisir" className="hover:text-yellow-400 transition">
+      ⚙️ Nasıl Çalışır
+    </a>
+  </li>
+  <li>
+    <a href="/katkilar" className="hover:text-yellow-400 transition">
+      🌟 Topluluk Katkıları
+    </a>
+  </li>
+  <li>
+    <a href="/oduller" className="hover:text-yellow-400 transition">
+      🎁 Katkı Ödülleri
+    </a>
+  </li>
+  <li>
+    <a href="/sss" className="hover:text-yellow-400 transition">
+      ❓ SSS
+    </a>
+  </li>
+  <li>
+    <a href="/iletisim" className="hover:text-yellow-400 transition">
+      📩 İletişim
+    </a>
+  </li>
+</ul>
+
         </div>
 
         {/* 3️⃣ Sütun - Telif ve bilgi */}
