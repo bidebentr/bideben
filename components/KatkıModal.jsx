@@ -1,9 +1,14 @@
+"use client";
 import React, { useState, useMemo, useEffect } from "react";
+import { db } from "@/lib/firebase";
+import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { useSession } from "next-auth/react";
 
 export default function KatkıModal({ product, onClose, onAddToCart }) {
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const [progress, setProgress] = useState(0);
+  const { data: session } = useSession();
 
   if (!product) return null;
 
@@ -43,7 +48,7 @@ export default function KatkıModal({ product, onClose, onAddToCart }) {
   // Katkı sonrası animasyonlu ilerleme
   useEffect(() => {
     let start = 0;
-    const end = baseProgress + quantity * 0.1; // küçük artış efekti
+    const end = baseProgress + quantity * 0.1;
     const step = () => {
       start += (end - start) * 0.1;
       setProgress(start);
@@ -54,20 +59,37 @@ export default function KatkıModal({ product, onClose, onAddToCart }) {
   }, [baseProgress, quantity]);
 
   const totalPrice = (quantity * priceValue).toFixed(2);
-
   const increase = () => setQuantity((q) => q + 1);
   const decrease = () => setQuantity((q) => Math.max(1, q - 1));
 
-  const handleAdd = () => {
-  setAdded(true);
-  setTimeout(() => {
-    onAddToCart(product, quantity);
-    if (typeof onAddContribution === "function") {
-      onAddContribution(product.id, quantity);
-    }
-    onClose();
-  }, 4000);
-};
+  // 🔥 Satın alma sonrası veritabanına kayıt
+  const handleAdd = async () => {
+    setAdded(true);
+    setTimeout(async () => {
+      try {
+        // 🧾 Firestore sipariş kaydı
+        await addDoc(collection(db, "orders"), {
+          userEmail: session?.user?.email || "misafir",
+          userName: session?.user?.name || "Anonim",
+          productName: product.name,
+          productId: product.id,
+          category: product.category,
+          price: `${totalPrice} TL`,
+          quantity,
+          image: product.image,
+          date: Timestamp.now(),
+        });
+        console.log("✅ Sipariş Firestore’a eklendi");
+      } catch (err) {
+        console.error("❌ Firestore kaydı hatası:", err);
+      }
+
+      // 🛒 Sepete ekleme işlemi
+      onAddToCart(product, quantity);
+      onClose();
+    }, 4000);
+  };
+
   return (
     <div
       className="fixed inset-0 flex items-center justify-center z-50"
@@ -212,7 +234,6 @@ export default function KatkıModal({ product, onClose, onAddToCart }) {
             </button>
           </>
         ) : (
-          // ✅ Katkı sonrası animasyon
           <div className="flex flex-col items-center justify-center h-64">
             <div
               className="text-5xl mb-4 animate-bounce"
@@ -236,7 +257,6 @@ export default function KatkıModal({ product, onClose, onAddToCart }) {
         )}
       </div>
 
-      {/* ✨ Parıltı efektleri */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         {[...Array(15)].map((_, i) => (
           <div
