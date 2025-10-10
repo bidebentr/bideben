@@ -1,92 +1,87 @@
 import crypto from "crypto";
+import base64 from "nodejs-base64-converter";
 
 export default async function handler(req, res) {
-  // 🌍 Sadece POST isteği kabul et
   if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method not allowed" });
+    return res.status(405).json({ error: "Yalnızca POST istekleri desteklenir." });
   }
 
-  const { basket, total, email: userEmail } = req.body;
+  const {
+    user_name,
+    user_address,
+    user_phone,
+    email,
+    payment_amount,
+    basket,
+  } = req.body;
 
-  if (!basket || basket.length === 0) {
-    return res.status(400).json({ message: "Sepet boş" });
-  }
-
-  // 🔐 Ortam değişkenleri
   const merchant_id = process.env.PAYTR_MERCHANT_ID;
   const merchant_key = process.env.PAYTR_MERCHANT_KEY;
   const merchant_salt = process.env.PAYTR_MERCHANT_SALT;
 
-  if (!merchant_id || !merchant_key || !merchant_salt) {
-    console.error("🚨 PAYTR ortam değişkenleri eksik!");
-    return res.status(500).json({ message: "Sunucu yapılandırması eksik." });
-  }
+  // Sepeti encode et
+  const user_basket = base64.encode(JSON.stringify(basket));
 
-  // 👤 Kullanıcı ve sipariş bilgileri
-  const user_ip =
-    req.headers["x-forwarded-for"]?.split(",")[0] ||
-    req.socket?.remoteAddress ||
-    "127.0.0.1";
+  // Sipariş numarası (benzersiz)
+  const merchant_oid = "IN" + Date.now();
 
-  const merchant_oid = "BDBN_" + Date.now();
-  const email = userEmail || "info@bideben.com"; // Eğer login kullanıcısı varsa, onun maili buraya yazılır
-  const payment_amount = Math.round(parseFloat(total) * 100);
-  const user_name = "bideben kullanıcısı";
-  const user_address = "bideben dijital platform";
-  const user_phone = "0000000000";
+  // Ortak değişkenler
+  const no_installment = "0";
+  const max_installment = "0";
   const currency = "TL";
-  const test_mode = "0"; // 🔒 CANLI MOD SABİT
+  const test_mode = "0";
+  const lang = "tr";
+  const timeout_limit = "30";
 
-  // 🧾 Sepeti encode et
-  const basket_str = Buffer.from(JSON.stringify(basket)).toString("base64");
+  const merchant_ok_url = "https://www.bideben.com/odeme-basarili";
+  const merchant_fail_url = "https://www.bideben.com/odeme-hata";
 
-  // 🔑 Token oluştur (PAYTR formatında)
-  const hash_str = `${merchant_id}${user_ip}${merchant_oid}${email}${payment_amount}${basket_str}${currency}${test_mode}${merchant_salt}`;
+  const user_ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+
+  // 🔐 Güvenlik imzası
+  const hashSTR = `${merchant_id}${user_ip}${merchant_oid}${email}${payment_amount}${user_basket}${no_installment}${max_installment}${currency}${test_mode}`;
   const paytr_token = crypto
     .createHmac("sha256", merchant_key)
-    .update(hash_str)
+    .update(hashSTR + merchant_salt)
     .digest("base64");
 
-  try {
-    // 📦 PAYTR API isteği
-    const formData = new URLSearchParams({
-      merchant_id,
-      user_ip,
-      merchant_oid,
-      email,
-      payment_amount,
-      paytr_token,
-      user_name,
-      user_address,
-      user_phone,
-      merchant_ok_url: "https://www.bideben.com/odeme-basarili",
-      merchant_fail_url: "https://www.bideben.com/odeme-hata",
-      basket: basket_str,
-      currency,
-      test_mode, // 🔒 Canlı mod
-      lang: "tr",
-    });
+  const formData = new URLSearchParams({
+    merchant_id,
+    user_ip,
+    merchant_oid,
+    email,
+    payment_amount,
+    user_basket,
+    no_installment,
+    max_installment,
+    currency,
+    test_mode,
+    merchant_ok_url,
+    merchant_fail_url,
+    user_name,
+    user_address,
+    user_phone,
+    paytr_token,
+    timeout_limit,
+    lang,
+  });
 
+  try {
     const response = await fetch("https://www.paytr.com/odeme/api/get-token", {
       method: "POST",
-      body: formData,
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: formData.toString(),
     });
 
     const result = await response.json();
 
-    if (result.status === "success" && result.token) {
-      console.log("✅ PAYTR TOKEN OLUŞTU:", result.token);
-      return res.status(200).json({ status: "success", token: result.token });
+    if (result.status === "success") {
+      return res.status(200).json({ token: result.token });
     } else {
-      console.error("❌ PAYTR API HATASI:", result.reason || result);
-      return res.status(400).json({
-        status: "error",
-        message: "PAYTR API hatası",
-        detail: result.reason || result,
-      });
+      return res.status(400).json({ error: result.reason });
     }
   } catch (error) {
-    console.error("🚨 PAYTR bağlantı hatası:", error);
-    return res.status(500).json({ message: "PayTR bağlantı hatası" });
+    console.error("PAYTR API hatası:", error);
+    return res.status(500).json({ error: "Sunucu hatası" });
   }
 }

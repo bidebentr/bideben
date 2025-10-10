@@ -5,10 +5,7 @@ export default function Document() {
     <Html lang="tr">
       <Head>
         {/* ✅ Google Search Console Doğrulama */}
-        <meta
-          name="google-site-verification"
-          content="oVX_IwBVT7ZFU_CZXCAA68H5wT5e-5wx1-9Re7q9gT8"
-        />
+        <meta name="google-site-verification" content="TPfoGwWxWoZouG_OoAXbMHOMFdRYNSxnTRzFqXRb8i8" />
 
         {/* 🌐 Genel Site Bilgileri */}
         <meta charSet="utf-8" />

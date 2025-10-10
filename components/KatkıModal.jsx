@@ -1,10 +1,8 @@
 "use client";
 import React, { useState, useMemo, useEffect } from "react";
-import { db } from "@/lib/firebase";
-import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { useSession } from "next-auth/react";
 
-export default function KatkıModal({ product, onClose, onAddToCart }) {
+export default function KatkıModal({ product, onClose }) {
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -12,7 +10,7 @@ export default function KatkıModal({ product, onClose, onAddToCart }) {
 
   if (!product) return null;
 
-  // 🎨 Kategori renkleri (Home.jsx ile uyumlu)
+  // 🎨 Kategori renkleri
   const categoryColors = {
     "Beyaz Eşya": "#4fc3f7",
     "Elektrikli Ev Aletleri": "#ba68c8",
@@ -30,7 +28,6 @@ export default function KatkıModal({ product, onClose, onAddToCart }) {
   const barColor =
     categoryColors[product.category?.trim()] || categoryColors.DEFAULT;
 
-  // Sayısal fiyat değeri
   const priceValue = useMemo(() => {
     const raw = String(product.price || "")
       .replace(/[₺TL\s]/gi, "")
@@ -38,14 +35,12 @@ export default function KatkıModal({ product, onClose, onAddToCart }) {
     return parseFloat(raw) || 0;
   }, [product]);
 
-  // Topluluk katkısı yüzdesi
   const baseProgress = useMemo(() => {
     const sold = product.sold || 0;
     const target = product.target || 1;
     return Math.min((sold / target) * 100, 100);
   }, [product]);
 
-  // Katkı sonrası animasyonlu ilerleme
   useEffect(() => {
     let start = 0;
     const end = baseProgress + quantity * 0.1;
@@ -62,32 +57,44 @@ export default function KatkıModal({ product, onClose, onAddToCart }) {
   const increase = () => setQuantity((q) => q + 1);
   const decrease = () => setQuantity((q) => Math.max(1, q - 1));
 
-  // 🔥 Satın alma sonrası veritabanına kayıt
-  const handleAdd = async () => {
+  // 💳 Ödeme işlemini başlat
+  const handlePayment = async () => {
+    if (!session?.user?.email) {
+      alert("Lütfen giriş yapmadan katkı yapamazsınız.");
+      return;
+    }
+
     setAdded(true);
     setTimeout(async () => {
       try {
-        // 🧾 Firestore sipariş kaydı
-        await addDoc(collection(db, "orders"), {
-          userEmail: session?.user?.email || "misafir",
-          userName: session?.user?.name || "Anonim",
-          productName: product.name,
-          productId: product.id,
-          category: product.category,
-          price: `${totalPrice} TL`,
-          quantity,
-          image: product.image,
-          date: Timestamp.now(),
+        const basket = [[product.name, totalPrice, quantity]];
+        const response = await fetch("/api/paytr-init", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: session.user.email,
+            user_name: session.user.name,
+            user_address: "Katkı Sahibi - BideBen Kullanıcısı",
+            user_phone: "05555555555",
+            payment_amount: Math.round(priceValue * quantity * 100), // PayTR kuruş cinsinden ister
+            basket,
+          }),
         });
-        console.log("✅ Sipariş Firestore’a eklendi");
-      } catch (err) {
-        console.error("❌ Firestore kaydı hatası:", err);
-      }
 
-      // 🛒 Sepete ekleme işlemi
-      onAddToCart(product, quantity);
-      onClose();
-    }, 4000);
+        const data = await response.json();
+
+        if (data.token) {
+          // 🧭 PayTR iframe sayfasına yönlendir
+          window.location.href = `https://www.paytr.com/odeme/guvenli/${data.token}`;
+        } else {
+          console.error("PAYTR hata:", data.error);
+          alert("Ödeme başlatılamadı: " + data.error);
+        }
+      } catch (err) {
+        console.error("Ödeme isteği hatası:", err);
+        alert("Bir hata oluştu, lütfen tekrar deneyin.");
+      }
+    }, 1500);
   };
 
   return (
@@ -219,9 +226,9 @@ export default function KatkıModal({ product, onClose, onAddToCart }) {
               </span>
             </p>
 
-            {/* 🛒 Buton */}
+            {/* 🛒 Ödeme Butonu */}
             <button
-              onClick={handleAdd}
+              onClick={handlePayment}
               className="w-full py-3 text-lg font-bold rounded-xl transition transform hover:scale-105"
               style={{
                 background: `linear-gradient(90deg, ${barColor}, #fff, ${barColor})`,
@@ -230,7 +237,7 @@ export default function KatkıModal({ product, onClose, onAddToCart }) {
                 animation: "glow 3s ease-in-out infinite",
               }}
             >
-              💎 Sepete Ekle
+              💳 Ödeme Yap ve Katkı Sağla
             </button>
           </>
         ) : (
@@ -239,7 +246,7 @@ export default function KatkıModal({ product, onClose, onAddToCart }) {
               className="text-5xl mb-4 animate-bounce"
               style={{ color: barColor, textShadow: `0 0 20px ${barColor}` }}
             >
-              ✅
+              🔄
             </div>
             <h3
               className="text-2xl font-bold"
@@ -248,48 +255,14 @@ export default function KatkıModal({ product, onClose, onAddToCart }) {
                 textShadow: `0 0 10px ${barColor}`,
               }}
             >
-              Katkın Eklendi!
+              PayTR bağlantısı kuruluyor...
             </h3>
             <p className="mt-2 text-gray-300 text-sm text-center">
-              Topluluğa yaptığın katkı için teşekkür ederiz 💜
+              Lütfen bekleyin, ödeme sayfasına yönlendiriliyorsunuz 💎
             </p>
           </div>
         )}
       </div>
-
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        {[...Array(15)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 rounded-full bg-white opacity-70"
-            style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              animation: `float ${2 + Math.random() * 3}s linear infinite`,
-              filter: `drop-shadow(0 0 6px ${barColor})`,
-            }}
-          />
-        ))}
-      </div>
-
-      <style jsx>{`
-        @keyframes glow {
-          0%, 100% { filter: brightness(1); }
-          50% { filter: brightness(1.3); }
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: scale(0.95); }
-          to { opacity: 1; transform: scale(1); }
-        }
-        @keyframes float {
-          0% { transform: translateY(0) scale(1); opacity: 1; }
-          100% { transform: translateY(-30px) scale(0.5); opacity: 0; }
-        }
-        @keyframes glowPulse {
-          0%, 100% { box-shadow: 0 0 20px ${barColor}; }
-          50% { box-shadow: 0 0 50px ${barColor}; }
-        }
-      `}</style>
     </div>
   );
 }
