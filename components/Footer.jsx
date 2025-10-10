@@ -21,43 +21,59 @@ export default function Footer() {
         <div>
           <h2 className="text-yellow-400 font-semibold text-lg mb-2">Keşfet</h2>
           <ul className="space-y-1 text-sm">
-  <li>
-    <a href="/nasil-calisir" className="hover:text-yellow-400 transition">
-      ⚙️ Nasıl Çalışır
-    </a>
-  </li>
-  <li>
-    <a href="/katkilar" className="hover:text-yellow-400 transition">
-      🌟 Topluluk Katkıları
-    </a>
-  </li>
-  <li>
-    <a href="/oduller" className="hover:text-yellow-400 transition">
-      🎁 Katkı Ödülleri
-    </a>
-  </li>
-  <li>
-    <a href="/sss" className="hover:text-yellow-400 transition">
-      ❓ SSS
-    </a>
-  </li>
-  <li>
-    <a href="/iletisim" className="hover:text-yellow-400 transition">
-      📩 İletişim
-    </a>
-  </li>
-</ul>
-
+            <li>
+              <a href="/nasil-calisir" className="hover:text-yellow-400 transition">
+                ⚙️ Nasıl Çalışır
+              </a>
+            </li>
+            <li>
+              <a href="/katkilar" className="hover:text-yellow-400 transition">
+                🌟 Topluluk Katkıları
+              </a>
+            </li>
+            <li>
+              <a href="/oduller" className="hover:text-yellow-400 transition">
+                🎁 Katkı Ödülleri
+              </a>
+            </li>
+            <li>
+              <a href="/sss" className="hover:text-yellow-400 transition">
+                ❓ SSS
+              </a>
+            </li>
+            <li>
+              <a href="/iletisim" className="hover:text-yellow-400 transition">
+                📩 İletişim
+              </a>
+            </li>
+          </ul>
         </div>
 
         {/* 3️⃣ Sütun - Telif ve bilgi */}
-        <div className="sm:text-right">
-          <p className="text-sm">
-            © 2025 <span className="text-yellow-400 font-medium">bideben.com</span>
-          </p>
-          <p className="text-xs text-gray-500 mt-1">
-            Yapay Zeka ile Üretilen Dijital Eser Platformu
-          </p>
+        <div className="sm:text-right flex flex-col items-center sm:items-end justify-between h-full">
+          <div>
+            <p className="text-sm">
+              © 2025 <span className="text-yellow-400 font-medium">bideben.com</span>
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              Yapay Zeka ile Üretilen Dijital Eser Platformu
+            </p>
+          </div>
+
+          {/* 📄 Yasal bağlantılar */}
+          <div className="flex flex-wrap justify-center sm:justify-end mt-4 space-x-3 text-xs text-gray-500">
+            <a href="/kullanim-kosullari" className="hover:text-yellow-400 transition">
+              Kullanım Koşulları
+            </a>
+            <span className="text-gray-600">|</span>
+            <a href="/gizlilik-politikasi" className="hover:text-yellow-400 transition">
+              Gizlilik Politikası
+            </a>
+            <span className="text-gray-600">|</span>
+            <a href="/kvkk-aydinlatma-metni" className="hover:text-yellow-400 transition">
+              KVKK Aydınlatma Metni
+            </a>
+          </div>
         </div>
       </div>
 
