@@ -5,7 +5,7 @@ import "@/styles/globals.css";
 import { SessionProvider } from "next-auth/react";
 
 export default function App({ Component, pageProps: { session, ...pageProps } }) {
-  // 🧩 Facebook login sonrası oluşan "#_=_" sorununu düzelt
+  // 🧩 Facebook login sonrası "#_=_" linkini temizle
   useEffect(() => {
     if (window.location.hash === "#_=_") {
       history.replaceState(null, document.title, window.location.pathname + window.location.search);
@@ -15,7 +15,6 @@ export default function App({ Component, pageProps: { session, ...pageProps } })
   return (
     <SessionProvider session={session} refetchInterval={0} refetchOnWindowFocus={false}>
       <>
-        {/* 🌍 Meta ayarları */}
         <Head>
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta charSet="utf-8" />
@@ -27,7 +26,6 @@ export default function App({ Component, pageProps: { session, ...pageProps } })
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        {/* 📊 Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-XRB4G2KHWL"
           strategy="afterInteractive"
@@ -43,7 +41,6 @@ export default function App({ Component, pageProps: { session, ...pageProps } })
           `}
         </Script>
 
-        {/* ⚡ Sayfa içeriği */}
         <Component {...pageProps} />
       </>
     </SessionProvider>

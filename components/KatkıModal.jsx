@@ -5,11 +5,11 @@ import { useSession } from "next-auth/react";
 export default function KatkıModal({ product, onClose, onAddToCart }) {
   const [quantity, setQuantity] = useState(1);
   const [progress, setProgress] = useState(0);
-  const { data: session } = useSession();
+  const { data: session, status } = useSession(); // 👈 status eklendi
 
   if (!product) return null;
 
-  // 🎨 Renkler
+  // 🎨 Kategori renkleri
   const categoryColors = {
     "Beyaz Eşya": "#4fc3f7",
     "Elektrikli Ev Aletleri": "#ba68c8",
@@ -26,6 +26,7 @@ export default function KatkıModal({ product, onClose, onAddToCart }) {
   };
   const barColor = categoryColors[product.category?.trim()] || categoryColors.DEFAULT;
 
+  // 💰 Fiyat
   const priceValue = useMemo(() => {
     const raw = String(product.price || "")
       .replace(/[₺TL\s]/gi, "")
@@ -39,6 +40,7 @@ export default function KatkıModal({ product, onClose, onAddToCart }) {
     return Math.min((sold / target) * 100, 100);
   }, [product]);
 
+  // 🧮 İlerleme animasyonu
   useEffect(() => {
     let start = 0;
     const end = baseProgress + quantity * 0.1;
@@ -65,6 +67,15 @@ export default function KatkıModal({ product, onClose, onAddToCart }) {
     onAddToCart(product, quantity);
     onClose();
   };
+
+  // 🕓 Giriş durumu kontrolü
+  if (status === "loading") {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center text-white bg-black/70 backdrop-blur-lg z-50">
+        🔄 Giriş durumu kontrol ediliyor...
+      </div>
+    );
+  }
 
   return (
     <div

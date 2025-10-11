@@ -1,6 +1,10 @@
+"use client";
 import React from "react";
+import { useSession } from "next-auth/react";
 
 export default function ProductCard({ product, handleAddToCart }) {
+  const { data: session, status } = useSession(); // 👈 session durumu
+
   const title = product?.name || "Ürün Adı";
   const category = product?.category || "Kategori";
   const price = parseFloat(String(product?.price || "0").replace(",", "."));
@@ -9,10 +13,20 @@ export default function ProductCard({ product, handleAddToCart }) {
   const image = product?.image || "/images/default.jpg";
   const link = product?.link || "#";
 
-  const sold = Math.min(Math.floor(target * 0.45), target); // demo
+  const sold = Math.min(Math.floor(target * 0.45), target); // demo verisi
   const progress = target ? Math.min((sold / target) * 100, 100) : 0;
 
+  // 🛒 Sepete Ekle
   const add = () => {
+    if (status === "loading") {
+      alert("Giriş durumu kontrol ediliyor, lütfen bekleyin...");
+      return;
+    }
+    if (!session?.user?.email) {
+      alert("Sepete eklemek için önce giriş yapmalısınız.");
+      return;
+    }
+
     handleAddToCart?.({
       id: product.id,
       title,
@@ -24,10 +38,10 @@ export default function ProductCard({ product, handleAddToCart }) {
 
   return (
     <div className="w-full bg-[#0b0b0b] border border-yellow-600/60 rounded-xl p-3 sm:p-4 text-white shadow-[0_0_18px_rgba(255,215,0,0.12)] hover:shadow-[0_0_24px_rgba(255,215,0,0.22)] transition-all">
-      {/* Görsel — sabit en-boy oranı + object-cover */}
+      {/* Görsel */}
       <div
         className="relative w-full rounded-lg overflow-hidden mb-3"
-        style={{ aspectRatio: "4 / 5" }}  // => görüntü bozulmaz
+        style={{ aspectRatio: "4 / 5" }}
       >
         <img
           src={image}
@@ -47,9 +61,20 @@ export default function ProductCard({ product, handleAddToCart }) {
 
       {/* Bilgiler */}
       <div className="text-[12px] sm:text-sm space-y-1 text-gray-200 mb-3">
-        <p>💎 Dijital Eser: <span className="text-yellow-400">{price.toFixed(2)} TL</span></p>
-        <p>🎯 Hedef Satış: <span className="text-yellow-400">{target.toLocaleString("tr-TR")}</span></p>
-        <p>💰 Piyasa Değeri: <span className="text-yellow-400">{marketprice}</span></p>
+        <p>
+          💎 Dijital Eser:{" "}
+          <span className="text-yellow-400">{price.toFixed(2)} TL</span>
+        </p>
+        <p>
+          🎯 Hedef Satış:{" "}
+          <span className="text-yellow-400">
+            {target.toLocaleString("tr-TR")}
+          </span>
+        </p>
+        <p>
+          💰 Piyasa Değeri:{" "}
+          <span className="text-yellow-400">{marketprice}</span>
+        </p>
       </div>
 
       {/* Katkı barı */}
@@ -60,15 +85,21 @@ export default function ProductCard({ product, handleAddToCart }) {
         />
       </div>
       <p className="text-[11px] text-gray-400 mb-3">
-        {sold.toLocaleString("tr-TR")} / {target.toLocaleString("tr-TR")} katkı tamamlandı
+        {sold.toLocaleString("tr-TR")} / {target.toLocaleString("tr-TR")} katkı
+        tamamlandı
       </p>
 
       {/* Butonlar */}
       <button
         onClick={add}
-        className="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-semibold py-2 rounded-lg shadow-md transition text-[13px] sm:text-sm"
+        disabled={status === "loading"}
+        className={`w-full font-semibold py-2 rounded-lg shadow-md transition text-[13px] sm:text-sm ${
+          status === "loading"
+            ? "bg-gray-600 text-gray-400 cursor-not-allowed"
+            : "bg-yellow-500 hover:bg-yellow-400 text-black"
+        }`}
       >
-        🛒 Sepete Ekle
+        {status === "loading" ? "🔄 Giriş kontrol ediliyor..." : "🛒 Sepete Ekle"}
       </button>
 
       {link && link !== "#" && (
