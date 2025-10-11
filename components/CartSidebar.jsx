@@ -1,43 +1,70 @@
+"use client";
 import React from "react";
+import { useSession } from "next-auth/react";
 
-export default function CartSidebar({ open, onClose, items, onUpdateQty, onRemove, onClear, total }) {
+export default function CartSidebar({
+  open,
+  onClose,
+  items,
+  onUpdateQty,
+  onRemove,
+  onClear,
+  total,
+}) {
+  const { data: session } = useSession();
+
   if (!open) return null;
 
   const handlePayment = async () => {
+    if (!session?.user?.email) {
+      alert("Ödeme yapabilmek için lütfen giriş yapın.");
+      return;
+    }
+
+    if (!items || items.length === 0) {
+      alert("Sepetiniz boş. Önce ürün ekleyin.");
+      return;
+    }
+
     try {
+      const basket = items.map((item) => [
+        item.name,
+        item.unitPrice.toFixed(2),
+        item.qty,
+      ]);
+
       const response = await fetch("/api/paytr-init", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          basket: items.map((item) => [
-            item.name,
-            item.unitPrice.toFixed(2),
-            item.qty,
-          ]),
-          total: parseFloat(total),
-          test_mode: "0", // 🔒 HER ZAMAN CANLI MOD
+          email: session.user.email,
+          user_name: session.user.name || "BideBen Kullanıcısı",
+          user_address: "BideBen Topluluk Katkısı",
+          user_phone: "05555555555",
+          basket,
+          payment_amount: Math.round(parseFloat(total) * 100), // kuruş cinsinden
         }),
       });
 
       const data = await response.json();
 
-      if (data.status === "success" && data.token) {
-        // 🚀 Başarılı, ödeme sayfasına yönlendir
+      if (data.token) {
+        // 🚀 Başarılı: PayTR ödeme sayfasına yönlendir
         window.location.href = `https://www.paytr.com/odeme/guvenli/${data.token}`;
       } else {
         console.error("PayTR Yanıtı:", data);
-        alert("PayTR bağlantı hatası: " + (data.message || "Geçersiz yanıt"));
+        alert("PayTR bağlantı hatası: " + (data.error || "Geçersiz yanıt"));
       }
     } catch (err) {
       console.error("Bağlantı Hatası:", err);
-      alert("Bağlantı hatası, lütfen tekrar deneyin.");
+      alert("Bir hata oluştu. Lütfen tekrar deneyin.");
     }
   };
 
   return (
     <div className="fixed inset-0 flex justify-end bg-black/50 z-50">
       <div className="w-96 bg-[#111] h-full text-white p-6 flex flex-col justify-between shadow-2xl">
-        {/* Üst Başlık */}
+        {/* 🧭 Üst Başlık */}
         <div>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold">🛒 Sepetin</h2>
@@ -57,7 +84,7 @@ export default function CartSidebar({ open, onClose, items, onUpdateQty, onRemov
                 <div>
                   <p className="font-semibold">{item.name}</p>
                   <p className="text-sm text-gray-400">
-                    {item.unitPrice} ₺ x {item.qty}
+                    {item.unitPrice.toFixed(2)} ₺ x {item.qty}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -83,7 +110,7 @@ export default function CartSidebar({ open, onClose, items, onUpdateQty, onRemov
           )}
         </div>
 
-        {/* Alt Kısım */}
+        {/* 🧮 Alt Kısım */}
         {items.length > 0 && (
           <div className="mt-6">
             <div className="flex justify-between text-lg mb-4">
@@ -100,6 +127,13 @@ export default function CartSidebar({ open, onClose, items, onUpdateQty, onRemov
               }}
             >
               💳 Ödeme Yap ({total} ₺)
+            </button>
+
+            <button
+              onClick={onClear}
+              className="w-full mt-3 py-2 rounded-xl font-semibold bg-gray-800 text-gray-300 hover:bg-gray-700 transition"
+            >
+              🧹 Sepeti Temizle
             </button>
           </div>
         )}

@@ -1,54 +1,42 @@
 "use client";
-import { useState } from "react";
-import { useSession, signOut } from "next-auth/react";
-import Link from "next/link";
-import { FaUserCircle, FaShoppingBag, FaSignOutAlt } from "react-icons/fa";
+import { useSession, signIn, signOut } from "next-auth/react";
 
 export default function ProfileMenu() {
   const { data: session } = useSession();
-  const [open, setOpen] = useState(false);
 
-  if (!session) return null;
-
-  return (
-    <div className="fixed top-4 right-6 z-50">
-      <div
-        onClick={() => setOpen(!open)}
-        className="flex items-center gap-3 cursor-pointer group"
-      >
+  if (session) {
+    return (
+      <div className="fixed top-4 right-6 flex items-center gap-3 z-50">
         <img
           src={session.user?.image || "/default-avatar.png"}
           alt={session.user?.name || "Kullanıcı"}
-          className="w-10 h-10 rounded-full border border-yellow-500 group-hover:scale-105 transition"
+          className="w-10 h-10 rounded-full border border-gray-500 cursor-pointer hover:scale-105 transition"
           title={session.user?.name}
         />
-        <span className="text-gray-300 group-hover:text-yellow-400 transition text-sm">
-          {session.user?.name?.split(" ")[0] || "Profil"}
-        </span>
+        <button
+          onClick={() => signOut({ callbackUrl: "/" })}
+          className="px-3 py-1 bg-gray-800 text-gray-200 rounded-md hover:bg-gray-700 transition"
+        >
+          Çıkış
+        </button>
       </div>
+    );
+  }
 
-      {open && (
-        <div className="absolute right-0 mt-2 w-44 bg-[#111] border border-gray-700 rounded-xl shadow-lg overflow-hidden animate-fadeIn">
-          <Link
-            href="/hesabim"
-            className="flex items-center gap-2 px-4 py-2 hover:bg-yellow-500/20 text-gray-200 text-sm transition"
-          >
-            <FaUserCircle /> Hesabım
-          </Link>
-          <Link
-            href="/siparisler"
-            className="flex items-center gap-2 px-4 py-2 hover:bg-yellow-500/20 text-gray-200 text-sm transition"
-          >
-            <FaShoppingBag /> Siparişlerim
-          </Link>
-          <button
-            onClick={() => signOut({ callbackUrl: "/" })}
-            className="flex items-center gap-2 px-4 py-2 w-full hover:bg-red-500/20 text-gray-200 text-sm transition"
-          >
-            <FaSignOutAlt /> Çıkış
-          </button>
-        </div>
-      )}
+  return (
+    <div className="fixed top-4 right-6 flex items-center gap-3 z-50">
+      <button
+        onClick={() => signIn("google")}
+        className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition"
+      >
+        Google ile Giriş
+      </button>
+      <button
+        onClick={() => signIn("facebook")}
+        className="px-3 py-1 bg-blue-800 text-white rounded-md hover:bg-blue-700 transition"
+      >
+        Facebook ile Giriş
+      </button>
     </div>
   );
 }

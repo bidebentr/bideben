@@ -3,13 +3,13 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import Link from "next/link"; // ✅ doğru konum
 
 export default function Hesabim() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // 🧩 Oturum kontrolü
   useEffect(() => {
     if (!session?.user?.email) return;
 
@@ -36,25 +36,35 @@ export default function Hesabim() {
     fetchOrders();
   }, [session]);
 
-  if (!session)
+  if (status === "loading") {
+    return (
+      <div className="flex items-center justify-center min-h-screen text-gray-300">
+        🔄 Giriş bilgileri kontrol ediliyor...
+      </div>
+    );
+  }
+
+  if (!session) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen text-white">
         <h2 className="text-2xl mb-4">🚪 Giriş yapman gerekiyor</h2>
         <p className="text-gray-400">Sipariş geçmişini görmek için önce oturum aç.</p>
       </div>
     );
+  }
 
-  if (loading)
+  if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen text-gray-300">
         🔄 Siparişlerin yükleniyor...
       </div>
     );
+  }
 
   // 💰 Toplam katkı
   const totalSpent = useMemo(() => {
     return orders.reduce((acc, o) => {
-      const amount = parseFloat(String(o.price).replace(/[₺TL\s]/gi, ""));
+      const amount = parseFloat(o.total_amount || 0);
       return acc + (isNaN(amount) ? 0 : amount);
     }, 0);
   }, [orders]);
@@ -80,7 +90,7 @@ export default function Hesabim() {
             />
             <div>
               <h2 className="text-2xl font-bold text-purple-400">
-                {session.user?.name}
+                {session.user?.name || "Kullanıcı"}
               </h2>
               <p className="text-gray-400 text-sm">{session.user?.email}</p>
             </div>
@@ -131,20 +141,15 @@ export default function Hesabim() {
             >
               <div className="flex items-center space-x-4">
                 <img
-                  src={order.image}
-                  alt={order.productName}
+                  src={order.image || "/images/default.jpg"}
+                  alt={order.productName || "Ürün"}
                   className="w-20 h-20 object-cover rounded-lg border border-gray-600"
                 />
                 <div>
-                  {/* 🔗 Ürün detay linki */}
-                  <Link
-                    href={`/urun/${order.productId}`}
-                    className="text-lg font-semibold text-yellow-300 hover:text-yellow-400 transition cursor-pointer"
-                  >
-                    🔗 {order.productName}
-                  </Link>
-
-                  <p className="text-sm text-gray-400">{order.category}</p>
+                  <p className="text-lg font-semibold text-yellow-300">
+                    🔗 {order.productName || "Katkı Kaydı"}
+                  </p>
+                  <p className="text-sm text-gray-400">{order.category || "Genel Katkı"}</p>
                   <p className="text-sm text-gray-400">
                     🕓{" "}
                     {order.date?.toDate
@@ -155,8 +160,12 @@ export default function Hesabim() {
               </div>
 
               <div className="text-right">
-                <p className="text-lg font-bold text-green-400">{order.price}</p>
-                <p className="text-sm text-gray-400">Adet: {order.quantity}</p>
+                <p className="text-lg font-bold text-green-400">
+                  {order.price
+                    ? `${order.price} ₺`
+                    : `${(order.total_amount || 0).toFixed(2)} ₺`}
+                </p>
+                <p className="text-sm text-gray-400">Adet: {order.quantity || 1}</p>
               </div>
             </div>
           ))}
